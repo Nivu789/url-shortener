@@ -7,7 +7,8 @@ const getHome = async(req,res) =>{
     if(req.session.email){
         const userData = await User.findOne({email:req.session.email})
         console.log(userData)
-        const urlData = await URL.findOne({userId:userData._id})
+        const urlData = await URL.find({userId:userData._id})
+        console.log(urlData.length)
         res.render('home',{userData,urlData})
     }
 }
@@ -41,13 +42,12 @@ const loginUser = async(req,res) =>{
 const shortenUrl = async(req,res) =>{
     const shortId = shortid.generate()
     const userData = await User.findOne({email:req.session.email})
-    let visitedHistory = {time:Date.now()} 
     const url = new URL({
         shortId:shortId,
         requestedUrl:req.body.url,
         userId:userData._id
     })
-    url.visitedHistory.push(visitedHistory)
+    
     await url.save()
     res.redirect("/home")
 }
@@ -57,10 +57,18 @@ const visitRequestedSite = async(req,res) =>{
     console.log("Short id is",shortId)
     const urlData = await URL.findOne({shortId:shortId})
     console.log(urlData)
+    let visited = {time:Date.now()}
     if(urlData){
         console.log(urlData.requestedUrl)
-        res.redirect(urlData.requestedUrl)
+        urlData.visitedHistory.push(visited)
+        urlData.save()
+        res.redirect(`${urlData.requestedUrl}`)
     }
 }
 
-module.exports = {getHome,shortenUrl,registerUser,loginUser,loadLogin,visitRequestedSite}
+const logoutUser = async(req,res) =>{
+    req.session.destroy()
+    res.redirect('/')
+}
+
+module.exports = {getHome,shortenUrl,registerUser,loginUser,loadLogin,visitRequestedSite,logoutUser}
