@@ -3,19 +3,14 @@ const URL = require('../models/urlModel')
 const User = require('../models/userModel');
 
 
-const getHome = async(sessionEmail) =>{
-    try {
-        if(sessionEmail){
-            const userData = await User.findOne({email:sessionEmail})
-            console.log(userData)
-            const urlData = await URL.find({userId:userData._id})
-            console.log(urlData.length)
-            res.render('home',{userData,urlData})
-        }
-    } catch (error) {
-        console.log(error)
+const getHome = async(req,res) =>{
+    if(req.session.email){
+        const userData = await User.findOne({email:req.session.email})
+        console.log(userData)
+        const urlData = await URL.find({userId:userData._id})
+        console.log(urlData.length)
+        res.render('home',{userData,urlData})
     }
-    
 }
 
 const loadLogin = async(req,res) =>{
