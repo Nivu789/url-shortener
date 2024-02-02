@@ -21,8 +21,10 @@ urlRoute.post('/register',urlFunctions.registerUser)
 
 urlRoute.post('/login',urlFunctions.loginUser)
 
-urlRoute.get('/get-site/:shortId',urlFunctions.visitRequestedSite)
+urlRoute.get('/:shortId',urlFunctions.visitRequestedSite)
 
-urlRoute.get('/logout',auth.isLogin,urlFunctions.logoutUser)
+urlRoute.post('/delete-url',urlFunctions.deleteUrl)
+
+urlRoute.get('/user/logout',auth.isLogin,urlFunctions.logoutUser)
 
 module.exports = urlRoute

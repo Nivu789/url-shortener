@@ -3,14 +3,19 @@ const URL = require('../models/urlModel')
 const User = require('../models/userModel');
 
 
-const getHome = async(req,res) =>{
-    if(req.session.email){
-        const userData = await User.findOne({email:req.session.email})
-        console.log(userData)
-        const urlData = await URL.find({userId:userData._id})
-        console.log(urlData.length)
-        res.render('home',{userData,urlData})
+const getHome = async(sessionEmail) =>{
+    try {
+        if(sessionEmail){
+            const userData = await User.findOne({email:sessionEmail})
+            console.log(userData)
+            const urlData = await URL.find({userId:userData._id})
+            console.log(urlData.length)
+            res.render('home',{userData,urlData})
+        }
+    } catch (error) {
+        console.log(error)
     }
+    
 }
 
 const loadLogin = async(req,res) =>{
@@ -55,15 +60,25 @@ const shortenUrl = async(req,res) =>{
 const visitRequestedSite = async(req,res) =>{
     const shortId = req.params.shortId
     console.log("Short id is",shortId)
-    const urlData = await URL.findOne({shortId:shortId})
+    if(shortId){
+        const urlData = await URL.findOne({shortId:shortId})
     console.log(urlData)
     let visited = {time:Date.now()}
+    console.log("IP address",req.ip)
     if(urlData){
         console.log(urlData.requestedUrl)
         urlData.visitedHistory.push(visited)
         urlData.save()
         res.redirect(`${urlData.requestedUrl}`)
     }
+    }
+    
+}
+
+const deleteUrl = async(req,res) =>{
+    const urlId = req.body.urlId
+    await URL.findByIdAndDelete({_id:urlId})
+    res.redirect('/home')
 }
 
 const logoutUser = async(req,res) =>{
@@ -71,4 +86,4 @@ const logoutUser = async(req,res) =>{
     res.redirect('/')
 }
 
-module.exports = {getHome,shortenUrl,registerUser,loginUser,loadLogin,visitRequestedSite,logoutUser}
+module.exports = {getHome,shortenUrl,registerUser,loginUser,loadLogin,visitRequestedSite,logoutUser,deleteUrl}

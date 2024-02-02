@@ -24,11 +24,14 @@
     </div>
     <script>
         function logout(){
-            fetch('/logout')
+            console.log("Hello")
+            fetch('/user/logout')
             .then((res)=>{
                 if(res.ok){
                     console.log("Success")
                     window.location.href = '/'
+                }else{
+                    console.log("error")
                 }
             }).catch(err=>{
                 console.log(err)
@@ -43,6 +46,7 @@
                 <th scope="col">Requested Url</th>
                 <th scope="col">Short Url</th>
                 <th scope="col">Visits</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -50,13 +54,35 @@
                     <tr>
                         <th scope="row"><%=i+1%></th>
                         <td><%=urlData[i].requestedUrl%></td>
-                        <td><%=urlData[i].shortId%></td>
+                        <td>/<%=urlData[i].shortId%></td>
                         <td><%=urlData[i].visitedHistory.length%></td>
+                        <td><button class="btn btn-danger" onclick="deleteUrl('<%=urlData[i]._id%>')">Delete</button></td>
                       </tr>
                     <%}%>
             </tbody>
           </table>
     </div>
-    
+    <script>
+        function deleteUrl(urlId){
+            fetch('/delete-url',{
+                method:"POST",
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    urlId:urlId
+                })
+            }).then(res=>{
+                if(res.ok){
+                    console.log("Success")
+                    window.location.reload()
+                }else{
+                    console.log("Error")
+                }
+            }).catch(err=>{
+                console.log(err)
+            })
+        }
+    </script>
 </body>
 </html>
