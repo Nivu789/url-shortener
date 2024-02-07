@@ -69,7 +69,7 @@
                             <tr>
                                 <th scope="row"><%=i+1%></th>
                                 <td><%=urlData[i].requestedUrl%></td>
-                                <td>/<%=urlData[i].shortId%></td>
+                                <td><a target="_blank" href="/<%=urlData[i].shortId%>">localhost:3000/<%=urlData[i].shortId%></a></td>
                                 <td><%=urlData[i].visitedHistory.length%></td>
                                 <td><button class="btn btn-danger" onclick="deleteUrl('<%=urlData[i]._id%>')">Delete</button></td>
                               </tr>
